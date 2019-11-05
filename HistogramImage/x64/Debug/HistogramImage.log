@@ -1,0 +1,10 @@
+﻿  histogram.cpp
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(120,18): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(147,18): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(77,20): warning C4101:  'hrange' :참조되지 않은 지역 변수입니다.
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(171,12): warning C4101:  'tmp' :참조되지 않은 지역 변수입니다.
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(172,8): warning C4101:  'diff' :참조되지 않은 지역 변수입니다.
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(254,18): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(270,18): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\HistogramImage\HistogramImage\histogram.cpp(213,20): warning C4101:  'hrange' :참조되지 않은 지역 변수입니다.
+  HistogramImage.vcxproj -> C:\kwon\HistogramImage\x64\Debug\HistogramImage.exe
