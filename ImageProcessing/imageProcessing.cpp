@@ -15,12 +15,16 @@ mod
 
 
 */
+#define _USE_MATH_DEFINES
+
 
 #include<stdlib.h>
 #include <stdio.h>
 #include<iostream>
 #include<math.h>
 #include<time.h>
+#include<string.h>
+#include<assert.h>
 
 typedef unsigned char uchar;
 
@@ -1088,7 +1092,220 @@ void make_Mask(int mask_size, double** Mask, int checkMask, int apply) // Sharpe
 
 }
 
+void LogImg(double** dimg, uchar** Result)
+{
+	int i, j;
+	double max = -10000000000000000000000.0,
+		min = 9999999999999999999999.0;
+	double tmp, total;
 
+	for (i = 0; i < Row; i++) 
+		for (j = 0; j < Col; j++)
+		{
+			//tmp = log(1 + dimg[i][j]);
+			tmp = log(dimg[i][j]);
+			if (max < tmp) max = tmp;
+			if (min > tmp) min = tmp;
+		}
+	total = max - min;
+	printf("max = %lf  min = %lf", max, min);
+
+	for (i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			tmp = ((dimg[i][j] - min) / total);
+			tmp *= 255;
+			//printf("tmp = %lf\n", tmp);
+
+			if (tmp > 255) tmp = 255;
+			else if (tmp < 0) tmp = 0;
+
+			Result[i][j] = tmp;
+			//printf("result[%d][%d] = %lf\n", i, j, tmp);
+		}
+
+}
+
+int rearrange(double* X, int N)
+{
+	int i, j, * power_of_2, * pos, stage, num_of_stages = 0;
+	double temp;
+
+	for (i = N; i > 1; i >>= 1, num_of_stages++);
+	if ((power_of_2 = (int*)malloc(sizeof(int) * num_of_stages)) == NULL)
+		return -1;
+	if ((pos = (int*)malloc(sizeof(int) * N)) == NULL)
+		return -1;
+
+
+	power_of_2[0] = 1;
+	for (stage = 1; stage < num_of_stages; stage++)
+		power_of_2[stage] = power_of_2[stage - 1] << 1;
+
+
+
+	for (i = 1; i < N - 1; i++)
+		pos[i] = 0;
+	for (i = 1; i < N - 1; i++)
+	{
+		if (!pos[i])
+		{
+			for (j = 0; j < num_of_stages; j++)
+			{
+				if (i & power_of_2[j])
+					pos[i] += power_of_2[num_of_stages - 1 - j];
+			}
+			temp = X[i];
+			X[i] = X[pos[i]];
+			X[pos[i]] = temp;
+			pos[pos[i]] = 1;
+		}
+	}
+	free(power_of_2);
+	free(pos);
+	return 0;
+}
+
+void fft(double* X_re, double* X_im, int N)
+{
+	double X_temp_re, X_temp_im;
+	double phase;
+	int num_of_stages = 0, num_of_elements, num_of_sections, size_of_butterfly;
+	int i, j, stage, m1, m2;
+
+//	printf("num_of_stages : %d\n", num_of_stages);
+
+	for (i = N; i > 1; i >>= 1, num_of_stages++);
+
+	num_of_elements = N;
+	num_of_sections = 1;
+	size_of_butterfly = N >> 1;
+
+	for (stage = 0; stage < num_of_stages; stage++)
+	{
+		m1 = 0;
+		m2 = size_of_butterfly;
+		for (i = 0; i < num_of_sections; i++)
+		{
+			for (j = 0; j < size_of_butterfly; j++, m1++, m2++)
+			{
+				X_temp_re = X_re[m1] - X_re[m2];
+				X_temp_im = X_im[m1] - X_im[m2];
+				X_re[m1] = X_re[m1] + X_re[m2];
+				X_im[m1] = X_im[m1] + X_im[m2];
+				phase = -2.0 * M_PI * j / num_of_elements;
+				X_re[m2] = X_temp_re * cos(phase) - X_temp_im * sin(phase);
+				X_im[m2] = X_temp_re * sin(phase) + X_temp_im * cos(phase); // <<<<
+			}
+			m1 += size_of_butterfly;
+			m2 += size_of_butterfly;
+		}
+//		printf("--num_of_stages : %d, num_of_elements : %d, num_of_sections : %d, size_of_butterfly : %d \n", num_of_stages, num_of_elements, num_of_sections, size_of_butterfly);
+
+
+		num_of_elements >>= 1;
+		num_of_sections <<= 1;
+		size_of_butterfly >>= 1;
+	}
+//	printf("num_of_stages : %d, num_of_elements : %d, num_of_sections : %d, size_of_butterfly : %d \n", num_of_stages, num_of_elements, num_of_sections, size_of_butterfly);
+
+	rearrange(X_re, N);
+	rearrange(X_im, N);
+}
+int fft_2d(double** X_re, double** X_im, int N, int Mode)
+{
+	int i, j;
+	double* temp_re, *temp_im;
+
+	if ((temp_re = (double *)malloc(sizeof(double) * N)) == NULL)
+		return -1;
+	if ((temp_im = (double *)malloc(sizeof(double) * N)) == NULL)
+		return -1;
+
+	if (Mode == 0)
+	{
+		// Processing for ROW
+		for (i = 0; i < N; i++)
+			fft(X_re[i], X_im[i], N);
+
+		// Processing for COLUMN
+		for (j = 0; j < N; j++)
+		{
+			for (i = 0; i < N; i++)
+			{
+				temp_re[i] = X_re[i][j];
+				temp_im[i] = X_im[i][j];
+			}
+			fft(temp_re, temp_im, N);
+			for (i = 0; i < N; i++)
+			{
+				X_re[i][j] = temp_re[i] / N;
+				X_im[i][j] = temp_im[i] / N;
+			}
+		}
+
+	}
+	else if (Mode == 1)
+	{
+		// Processing for ROW
+		for (i = 0; i < N; i++)
+			fft(X_re[i], X_im[i], N);
+
+		// Processing for COLUMN
+		for (j = 0; j < N; j++)
+		{
+			for (i = 0; i < N; i++)
+			{
+				temp_re[i] = X_re[i][j];
+				temp_im[i] = X_im[i][j];
+			}
+			fft(temp_re, temp_im, N);
+			for (i = 0; i < N; i++)
+			{
+				X_re[i][j] = temp_re[i] / N;
+				X_im[i][j] = temp_im[i] / N;
+			}
+		}
+	}
+	else if (Mode == 2)
+	{
+		for (i = 0; i < N; i++)
+		{
+			for (j = 0; j < N; j++)
+			{
+				temp_re[j] = X_re[i][j] * pow(-1, j);
+				temp_im[j] = X_im[i][j] * pow(-1, j);
+			}
+
+			fft(temp_re, temp_im, N);
+			for (j = 0; j < N; j++)
+			{
+				X_re[i][j] = temp_re[j];
+				X_im[i][j] = temp_im[j];
+			}
+		}
+		for (j = 0; j < N; j++)
+		{
+			for (i = 0; i < N; i++)
+			{
+				temp_re[i] = X_re[i][j] * pow(-1, i);
+				temp_im[i] = X_im[i][j] * pow(-1, i);
+			}
+
+
+			fft(temp_re, temp_im, N);
+			for (i = 0; i < N; i++)
+			{
+				X_re[i][j] = temp_re[i] / N;
+				X_im[i][j] = temp_im[i] / N;
+			}
+		}
+	}
+
+	free(temp_re);
+	free(temp_im);
+	return 0;
+}
 
 
 int main(int argc, char* argv[]) {
@@ -1129,7 +1346,12 @@ int main(int argc, char* argv[]) {
 	printf("	11 : Median Filtering \n ");
 	printf("	12 : Sharpening Filtering \n ");
 	printf("	13 : Embossing Filtering \n ");
-	printf("	14 : Sum Sharpening Filtering \n ");
+	printf("	14 : test Q 1\n");
+	printf("	15 : test Q 2\n");
+	printf("	16 : Log Power \n");
+	printf("	17 : Frequency Domain 주파수 영역 필터링 \n");
+	printf("	18 : fourier transform 푸리에 변환  \n");
+
 
 	scanf_s("%d", &mod);
 
@@ -1480,23 +1702,6 @@ int main(int argc, char* argv[]) {
 
 		}
 
-		/*
-		for (i = 0; i < 256; i++)
-			if (histogram[i])
-			{
-				min = i;
-				break;
-			}
-		for (i = 255; i >= 0; i--)
-			if (histogram[i])
-			{
-				max = i;
-				break;
-			}	
-		
-		*/
-
-
 			for (i = 0; i < 256; i++)
 			{
 				printf("%d", i);
@@ -1522,8 +1727,6 @@ int main(int argc, char* argv[]) {
 		average(img, Row, Col);
 
 
-			
-
 	}
 	if (mod == 15)
 	{
@@ -1541,6 +1744,322 @@ int main(int argc, char* argv[]) {
 		median1(img, outimg, Row, Col, mode, filterSize);
 	}
 
+	if (mod == 16)
+	{
+		double** dimg;
+		dimg = d_alloc(Row, Col);
+
+		uchar** circle;
+		circle = uc_alloc(Row, Col);
+
+
+		printf("diameter : ");
+		scanf_s("%d", &diameter); // 반지름
+
+		Circle(circle, Row, Col, diameter);
+		for (i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+				dimg[i][j] = (double)img[i][j];
+
+		LogImg(dimg, outimg);
+
+	}
+
+	if (mod == 17) // 주파수 영역 필터링
+	{
+		int i, j, Mode = 2, select, filter;
+		double max = -10E30, min = 10E30;
+		uchar** out2img;
+		FILE* fp1;
+		double** fourier_img, ** imaginary_img, ** Butterworth, ** Gaussian;
+		int cutoff;
+
+		printf("1 : Ideal filter \n");
+		printf("2 : Butterworth filter \n");
+		printf("3 : Gaussian filter \n");
+		printf("select : ");
+		scanf_s("%d", &select);
+
+		printf("1 : Low Pass Filter \n");
+		printf("2 : High Pass Filter \n");
+		printf("filter : ");
+		scanf_s("%d", &filter);
+		printf("Cutoff(D0) : ");
+		scanf_s("%d", &cutoff);
+
+		Butterworth = d_alloc(Row, Col);
+		out2img = uc_alloc(Row, Col);
+		fourier_img = d_alloc(Row, Col);
+		imaginary_img = d_alloc(Row, Col);
+		Gaussian = d_alloc(Row, Col);
+
+		for(i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+			{
+				fourier_img[i][j] = (double)img[i][j];
+				imaginary_img[i][j] = 0.;
+			}
+		fft_2d(fourier_img, imaginary_img, Row, Mode);
+
+		if (select == 1) // Ideal Filter
+		{
+
+			// Filtering Process
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+				{
+					double dimeter;
+
+					dimeter = sqrt((Row / 2. - i) * (Row / 2. - i) + (Col / 2. - j) * (Col / 2. - j));
+					if (filter == 1) // low pass filter : 저주파 성분만 통과
+					{
+						if (fabs(dimeter) > cutoff) // fabs : double형의 절대값 반환 , cutoff 
+						{
+							fourier_img[i][j] = 0;
+							imaginary_img[i][j] = 0;
+						}
+						else
+							imaginary_img[i][j] = -imaginary_img[i][j];
+					}
+					else if (filter == 2) // high pass filter : 고주파 성분만 통과
+					{
+						if (fabs(dimeter) < cutoff) // fabs : double형의 절대값 반환 , cutoff 
+						{
+							fourier_img[i][j] = 0;
+							imaginary_img[i][j] = 0;
+						}
+						else
+							imaginary_img[i][j] = -imaginary_img[i][j];
+
+					}
+					
+				}
+			// End of Ideal Filtering
+			fft_2d(fourier_img, imaginary_img, Row, Mode - 1);
+			// Shift Process
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+				{
+					fourier_img[i][j] = fourier_img[i][j] * pow(-1, i + j);
+				}
+
+		}
+		if (select == 2) // Butterworth Filter
+		{
+
+			// Filtering Process
+			// For Butterworth Filtering
+			int n = 2;
+//			int D0 = 50;
+			
+			double diameter;
+
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+				{
+					diameter = sqrt((Row / 2. - i) * (Row / 2. - i) + (Col / 2. - j) * (Col / 2. - j));
+
+					if (filter == 1)
+					{
+						// For Lowpass Filter
+						Butterworth[i][j] = 1 / (1 + pow(diameter / cutoff, 2 * n)); // cutoff(D0)
+					}
+					else if (filter == 2)
+					{
+						// For HighPass Filter
+						Butterworth[i][j] = 1 - 1/ (1 + pow(diameter / cutoff, 2 * n)); // cutoff(D0)
+					}
+
+					fourier_img[i][j] *= Butterworth[i][j];
+					imaginary_img[i][j] *= -Butterworth[i][j]; // Effect for flip image
+				}
+
+			fft_2d(fourier_img, imaginary_img, Row, Mode - 1);
+
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+					fourier_img[i][j] = fourier_img[i][j] * pow(-1, i + j);
+
+		}
+		if (select == 3)
+		{
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+				{
+					diameter = sqrt((Row / 2. - i) * (Row / 2. - i) + (Col / 2. - j) * (Col / 2. - j));
+					if (filter == 1)
+						Gaussian[i][j] = exp(-(diameter * diameter) / (2 * cutoff * cutoff));
+					else if(filter == 2)
+						Gaussian[i][j] = 1 - exp(-(diameter * diameter) / (2 * cutoff * cutoff));
+
+					fourier_img[i][j] *= Gaussian[i][j];
+					imaginary_img[i][j] *= -Gaussian[i][j]; // Effect for flip
+				}
+			fft_2d(fourier_img, imaginary_img, Row, Mode - 1); // Original FFT
+
+			if (filter == 2)
+			{
+				for (i = 0; i < Row; i++)
+					for (j = 0; j < Col; j++)
+						fourier_img[i][j] *= pow(-1, i + j);
+			}
+			
+		}
+
+		for (i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+			{
+				if (max < fourier_img[i][j]) max = fourier_img[i][j];
+				if (min > fourier_img[i][j]) min = fourier_img[i][j];
+			}
+		printf("clipping before -- Fourier Max Min Value = %lf  %lf\n", max, min);
+
+		for (i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+			{
+				if (fourier_img[i][j] > 255) fourier_img[i][j] = 255;
+				else if (fourier_img[i][j] < 0) fourier_img[i][j] = 0;
+
+				outimg[i][j] = (uchar)fourier_img[i][j];
+
+			}
+		
+	}
+	if (mod == 18)
+	{
+		double** fourierimg, ** imimg;
+		int temp;
+		fourierimg = d_alloc(Row, Col);
+		imimg = d_alloc(Row, Col);
+
+		for (i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+			{
+				fourierimg[i][j] = (double)img[i][j];
+				imimg[i][j] = 0.;
+			}
+		fft_2d(fourierimg, imimg, Row, 2); // N : N만큼씩 처리(한줄에)
+
+		for (i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+			{
+				temp = fourierimg[i][j];
+				if (temp > 255) outimg[i][j] = 255;
+				else if (temp < 0) outimg[i][j] = 0;
+				else outimg[i][j] = temp;
+
+			}
+	}
+
+	if (mod == 19)
+	{
+		int i, j, Mode;
+		double max = -10E30, min = 10E30;
+		FILE* fp1;
+		double** fourier_img, ** imaginary_img, **Butterworth;
+
+
+		char* filename2 = (char*)malloc(20 * sizeof(char));
+
+		Butterworth = d_alloc(Row, Col);
+		fourier_img = d_alloc(Row, Col);
+		imaginary_img = d_alloc(Row, Col);
+
+		printf("Mode : ");
+		scanf_s("%d", &Mode);
+
+		printf(" Image2 name : ");
+		scanf_s("%s", filename2, 20 * sizeof(char)); // 최신버전 문자열 입력
+
+		for (i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+			{
+				fourier_img[i][j] = (double)img[i][j];
+				imaginary_img[i][j] = 0.;
+			}
+
+		if (Mode == 0)
+			fft_2d(fourier_img, imaginary_img, Row, Mode);
+		else if (Mode == 1)
+			fft_2d(fourier_img, imaginary_img, Row, Mode);
+		else if (Mode == 2)
+		{
+			fft_2d(fourier_img, imaginary_img, Row, Mode);
+
+			// Filtering Process
+			// For Butterworth Filtering
+			int n = 2;
+			int D0 = 50;
+			double diameter;
+
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+				{
+					diameter = sqrt((Row / 2. - i) * (Row / 2. - i) + (Col / 2. - j) * (Col / 2. - j));
+					// For Lowpass Filter
+					Butterworth[i][j] = 1 / (1 + pow(diameter / D0, 2 * n));
+
+					fourier_img[i][j] *= Butterworth[i][j];
+					imaginary_img[i][j] *= -Butterworth[i][j]; // Effect for flip image
+				}
+
+			fft_2d(fourier_img, imaginary_img, Row, Mode - 1);
+
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+					fourier_img[i][j] = fourier_img[i][j] * pow(-1, i + j);
+
+		}
+
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+				{
+					if (max < fourier_img[i][j]) max = fourier_img[i][j];
+					if (min > fourier_img[i][j]) min = fourier_img[i][j];
+				}
+			printf("Fourier Max Min Value = %lf  %lf\n", max, min);
+
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+				{
+					if (fourier_img[i][j] > 255) fourier_img[i][j] = 255;
+					else if (fourier_img[i][j] < 0) fourier_img[i][j] = 0;
+
+					outimg[i][j] = (uchar)fourier_img[i][j];
+
+				}
+			write_ucmatrix(Col, Row, outimg, filename2);
+
+			for (i = 0; i < Row; i++)
+				for (j = 0; j < Col; j++)
+					fourier_img[i][j] -= min;
+
+			if (Mode == 2)
+			{
+				for (i = 0; i < Row; i++)
+					for (j = 0; j < Col; j++)
+					{
+
+						if (fourier_img[i][j] > 255) fourier_img[i][j] = 255;
+						else if (fourier_img[i][j] < 0) fourier_img[i][j] = 0;
+						outimg[i][j] = (uchar)fourier_img[i][j];
+					}
+			}
+			else
+			{
+				for (i = 0; i < Row; i++)
+					for (j = 0; j < Col; j++)
+					{
+						if (fourier_img[i][j] > 255) fourier_img[i][j] = 255;
+						else if (fourier_img[i][j] < 0) fourier_img[i][j] = 0;
+
+						outimg[i][j] = (uchar)fourier_img[i][j];
+					}
+
+			}
+
+
+	}
 
 	write_ucmatrix(Row, Col, outimg, argv[4]);
 

@@ -1,35 +1,42 @@
 ﻿  imageProcessing.cpp
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(80,28): warning C4244:  '인수': 'double'에서 'size_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(86,31): warning C4244:  '인수': 'double'에서 'size_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(192,19): warning C4101:  'mavg' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(225,23): warning C4244:  '=': 'double'에서 'uchar'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(324,12): warning C4101:  't' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(418,9): warning C4101:  'tmp' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(469,12): warning C4101:  'a' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(471,6): warning C4101:  'mtmp' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(469,15): warning C4101:  'b' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(471,12): warning C4101:  'count' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(548,29): warning C4244:  '=': 'double'에서 'uchar'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(544,6): warning C4101:  'temp' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(561,51): warning C4244:  '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(629,12): warning C4101:  'tmp' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(630,8): warning C4101:  'diff' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(725,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(764,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(851,18): warning C4101:  'z' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(875,18): warning C4101:  'z' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(875,15): warning C4101:  'y' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(905,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(941,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1115,12): warning C4244:  '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1311,11): warning C4477:  'scanf_s' : 서식 문자열 '%s'에 'unsigned int' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'unsigned __int64'입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1311,11): message :  이 인수는 버퍼 크기로 사용됩니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1109,6): warning C4101:  'histogramSpec' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1112,6): warning C4101:  'cdfOfHisto' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1097,6): warning C4101:  'avg' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1301,7): warning C4101:  'range' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1301,14): warning C4101:  't' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1455,23): warning C4101:  'tmp' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1455,10): warning C4101:  'scaleFactor' :참조되지 않은 지역 변수입니다.
-C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1454,9): warning C4101:  'LUT' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(84,28): warning C4244:  '인수': 'double'에서 'size_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(90,31): warning C4244:  '인수': 'double'에서 'size_t'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(196,19): warning C4101:  'mavg' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(229,23): warning C4244:  '=': 'double'에서 'uchar'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(328,12): warning C4101:  't' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(422,9): warning C4101:  'tmp' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(473,12): warning C4101:  'a' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(475,6): warning C4101:  'mtmp' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(473,15): warning C4101:  'b' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(475,12): warning C4101:  'count' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(552,29): warning C4244:  '=': 'double'에서 'uchar'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(548,6): warning C4101:  'temp' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(565,51): warning C4244:  '+=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(633,12): warning C4101:  'tmp' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(634,8): warning C4101:  'diff' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(729,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(768,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(855,18): warning C4101:  'z' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(879,18): warning C4101:  'z' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(879,15): warning C4101:  'y' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(909,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(945,14): warning C4101:  'coeff' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1123,19): warning C4244:  '=': 'double'에서 'uchar'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1332,12): warning C4244:  '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1533,11): warning C4477:  'scanf_s' : 서식 문자열 '%s'에 'unsigned int' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'unsigned __int64'입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1533,11): message :  이 인수는 버퍼 크기로 사용됩니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1889,21): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1946,27): warning C4244:  '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1972,11): warning C4477:  'scanf_s' : 서식 문자열 '%s'에 'unsigned int' 형식의 인수가 필요하지만 variadic 인수 2의 형식이 'unsigned __int64'입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1972,11): message :  이 인수는 버퍼 크기로 사용됩니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1326,6): warning C4101:  'histogramSpec' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1329,6): warning C4101:  'cdfOfHisto' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1314,6): warning C4101:  'avg' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1523,7): warning C4101:  'range' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1523,14): warning C4101:  't' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1677,23): warning C4101:  'tmp' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1677,10): warning C4101:  'scaleFactor' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1676,9): warning C4101:  'LUT' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1773,9): warning C4101:  'fp1' :참조되지 않은 지역 변수입니다.
+C:\kwon\ImageProcessing\ImageProcessing\imageProcessing.cpp(1958,9): warning C4101:  'fp1' :참조되지 않은 지역 변수입니다.
   ImageProcessing.vcxproj -> C:\kwon\ImageProcessing\x64\Debug\ImageProcessing.exe
