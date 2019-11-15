@@ -1586,7 +1586,7 @@ void row_analysis(double* h, int F_length, int size_x, int size_y, double** imag
 		for (j = 0, k = 0; j < size_x; j+=2, k++)
 			image2[i][k] = temp[i][j];
 
-	free(temp); // d_free(size_x, size_y, temp);
+	//free(temp); // d_free(size_x, size_y, temp);
 }
 
 void column_analysis(double* h, int F_length, int size_x, int size_y, double** image1, double** image2)
@@ -1623,9 +1623,9 @@ void column_analysis(double* h, int F_length, int size_x, int size_y, double** i
 
 	for (i = 0; i < size_x2; i++)
 		for (j = 0, k = 0; j < size_y; j+=2, k++)
-			image2[k][j] = temp[i][j];
+			image2[k][i] = temp[j][i];
 
-	free(temp); // d_free(size_x2, size_y, temp);
+	//free(temp); // d_free(size_x2, size_y, temp);
 }
 
 void conv_uc_to_d(int Row, int Col, uchar** ucimage, double** dimage)
@@ -2302,7 +2302,9 @@ int main(int argc, char* argv[]) {
 				imimg[i][j] = 0.;
 			}
 		fft_2d(fourierimg, imimg, Row, 2); // N : N만큼씩 처리(한줄에)
-
+		// LogImg(fourierimg, outimg);
+		conv_d_to_uc(Row, Col, fourierimg, outimg);
+		/*
 		for (i = 0; i < Row; i++)
 			for (j = 0; j < Col; j++)
 			{
@@ -2312,6 +2314,7 @@ int main(int argc, char* argv[]) {
 				else outimg[i][j] = temp;
 
 			}
+		*/
 	}
 
 	if (mod == 19) // Discrete Cosine Transform(DCT)
@@ -2349,8 +2352,8 @@ int main(int argc, char* argv[]) {
 		double **dimage1, **dimage2, **dimage3;
 
 		dimage1 = d_alloc(Row, Col);
-		dimage2 = d_alloc(Row, Col);
-		dimage3 = d_alloc(Row, Col);
+		dimage2 = d_alloc(Row/2, Col);
+		dimage3 = d_alloc(Row/2, Col/2);
 
 		conv_uc_to_d(Row, Col, img, dimage1);
 		row_analysis(A97L1, A97H1_l, Row, Col, dimage1, dimage2);
