@@ -1151,8 +1151,8 @@ void make_Mask(int mask_size, double** Mask, int checkMask, int apply) // Sharpe
 void LogImg(double** dimg, uchar** Result)
 {
 	int i, j;
-	double max = -10000000000000000000000.0,
-		min = 9999999999999999999999.0;
+	double max = -1000000000000000000.0,
+		min = 999999999999999999.0;
 	double tmp, total;
 
 	for (i = 0; i < Row; i++) 
@@ -1363,6 +1363,19 @@ int fft_2d(double** X_re, double** X_im, int N, int Mode) // 고속 푸리에 변환
 	return 0;
 }
 
+void imgSub(uchar** img1, uchar** img2, int Row, int Col)
+{
+	int i, j, sub;
+	for (i =0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			sub = 0;
+			sub = img1[i][j] - img2[i][j];
+			//printf("sub[%d][%d] = %d\n", i, j, sub);
+		}
+
+}
+
 /* integer DCT & IDCT */
 
 static int dct_buffer[8][8] = {
@@ -1396,8 +1409,8 @@ void Fdct(int** PEL, int** Coeff)
 		{
 			dd = 0;
 			for (k = 0; k < 8; k++)
-				dd += (long)t[i][k] * dct_buffer[j][k];
-			Coeff[i][j] = ((dd + 16384) >> 15);
+				dd += (long)t[k][i] * dct_buffer[j][k];
+			Coeff[j][i] = ((dd + 16384) >> 15);
 		}
 
 }
@@ -1428,8 +1441,8 @@ void mFdct(int** PEL, int** Coeff, int Row, int Col)
 				{
 					dd = 0;
 					for (k = 0; k < 8; k++)
-						dd += (long)t[i][k] * dct_buffer[j][k];
-					Coeff[i + y][j + x] = ((dd + 16384) >> 15);
+						dd += (long)t[k][i] * dct_buffer[j][k];
+					Coeff[j + y][i + x] = ((dd + 16384) >> 15);
 				}
 		}
 	
@@ -1482,20 +1495,189 @@ void mIdct(int** Coeff, int** PEL, int Row, int Col)
 				{
 					dd = 0;
 					for (k = 0; k < 8; k++)
-						dd += (long)Coeff[k+y][i+x] * dct_buffer[k][j];
+						dd += (long)Coeff[k + y][i + x] * dct_buffer[k][j];
 					t[i][j] = ((dd + 2048) / 4096);
 				}
-		
+
 			for (i = 0; i < 8; i++)
 				for (j = 0; j < 8; j++)
 				{
 					dd = 0;
 					for (k = 0; k < 8; k++)
 						dd += (long)t[k][i] * dct_buffer[k][j];
-					PEL[i+y][j+x] = ((dd + 16384) / 32768);
+					PEL[i + y][j + x] = ((dd + 16384) / 32768);
 				}
 		}
+}
 
+void dmIdct(double** Coeff, double** PEL, int Row, int Col)
+{
+	int i, j, k;
+	long dd;
+	double t[8][8];
+	int x, y;
+
+	for (y = 0; y < Row; y += 8)
+		for (x = 0; x < Col; x += 8)
+		{
+			for (i = 0; i < 8; i++)
+				for (j = 0; j < 8; j++)
+				{
+					dd = 0;
+					for (k = 0; k < 8; k++)
+						dd += (long)Coeff[k + y][i + x] * dct_buffer[k][j];
+					t[i][j] = ((dd + 2048) / 4096);
+				}
+
+			for (i = 0; i < 8; i++)
+				for (j = 0; j < 8; j++)
+				{
+					dd = 0;
+					for (k = 0; k < 8; k++)
+						dd += (long)t[k][i] * dct_buffer[k][j];
+					PEL[i + y][j + x] = ((dd + 16384) / 32768);
+				}
+		}
+}
+
+double C(int u)
+{
+	double d;
+	if (u == 0)
+	{
+		d = 1 / pow(2, 0.5);
+	}
+	else if (u > 0)
+	{
+		d = 1;
+	}
+	return d;
+}
+
+void cosTrans(double** img, double** outimg, int Row, int Col)
+{
+	int i, j, x, y, k;
+	double tempU, tempV, temp;
+
+
+	for (i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			temp = 0;
+			for (y = 0; y < Row; y++)
+				for (x = 0; x < Col; x++)
+				{
+					tempU = ((2 * y + 1) * i * M_PI) / (2 * Row);
+					tempV = ((2 * x + 1) * j * M_PI) / (2 * Col);
+
+					temp += img[y][x] * cos(tempU) * cos(tempV);
+					//printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
+				}
+			//printf("temp = %lf\n", temp);
+
+			outimg[i][j] = ((4 * C(i) * C(j)) / (Row * Col)) * temp;
+			//printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
+		}
+	
+}
+
+void cosTrans8(double** img, double** outimg, int Row, int Col)
+{
+	int i, j, x, y, u, v;
+	double tempU, tempV;
+	long temp = 0;
+
+
+	for (i = 0; i < Row; i+=8)
+		for (j = 0; j < Col; j+=8)
+		{
+			for (u = 0; u < 8; u++)
+				for (v = 0; v < 8; v++)
+				{
+					
+					temp = 0;
+					for (y = 0; y < 8; y++)
+						for (x = 0; x < 8; x++)
+						{
+
+							tempU = ((2 * y + 1) * u * M_PI) / (2 * 8);
+							tempV = ((2 * x + 1) * v * M_PI) / (2 * 8);
+
+							temp += img[y+i][x+j] * cos(tempU) * cos(tempV);
+							//printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
+						}
+					//printf("temp = %lf\n", temp);
+
+					outimg[i + u][j + v] = ((4 * C(u) * C(v)) / (8 * 8)) * temp;
+					//printf("outimg[%d][%d] = %lf\n", i+y, j+x, outimg[i][j]);
+
+				}
+
+			
+		}
+
+}
+
+void cosInverseTrans(double** img, double** outimg, int Row, int Col)
+{
+	int i, j, x, y, k;
+	double tempU, tempV, temp;
+
+	for (i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			temp = 0;
+			for (y = 0; y < Row; y++)
+				for (x = 0; x < Col; x++)
+				{
+					tempU = ((2 * i + 1) * y * M_PI) / (2 * Row);
+					tempV = ((2 * j + 1) * x * M_PI) / (2 * Col);
+
+					temp += img[y][x] * C(y) * C(x) * cos(tempU) * cos(tempV);
+					//printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
+				}
+			//printf("temp = %lf\n", temp);
+
+			outimg[i][j] = (4  / (Row * Col)) * temp;
+			printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
+		}
+
+}
+
+void cosInverseTrans8(double** img, double** outimg, int Row, int Col)
+{
+	int i, j, x, y, u, v;
+	double tempU, tempV;
+	double temp = 0;
+
+
+	for (i = 0; i < Row; i += 8)
+		for (j = 0; j < Col; j += 8)
+		{
+
+			for (y = 0; y < 8; y++)
+				for (x = 0; x < 8; x++)
+				{
+					temp = 0;
+
+					for (u = 0; u < 8; u++)
+						for (v = 0; v < 8; v++)
+						{
+							tempU = ((2 * y + 1) * u * M_PI) / (2 * 8);
+							tempV = ((2 * x + 1) * v * M_PI) / (2 * 8);
+
+							temp += img[u+i][v+j] * C(u) * C(v) * cos(tempU) * cos(tempV);
+							//printf("temp = %lf\n", temp);
+							//printf("img[%d][%d] = %lf\n", u + i, v + j, img[i][j]);
+
+						}
+					//printf("temp888 = %lf\n", temp);
+
+					outimg[i + y][j + x] = (4 / (8 * 8)) * temp;
+					//outimg[i + y][j + x] = 0.0625 * temp;
+					printf("outimg[%d][%d] = %lf\n", i + y, j + x, outimg[i+y][j+y]);
+				}
+		}
 }
 
 // Antonini Filter
@@ -1580,11 +1762,15 @@ void row_analysis(double* h, int F_length, int size_x, int size_y, double** imag
 				else if (sum > 255) sum = 255.;
 			*/
 			temp[i][j] = sum;
+//			printf("sum = %lf\n", sum);
 		}
 
 	for (i = 0; i < size_y; i++)
-		for (j = 0, k = 0; j < size_x; j+=2, k++)
+		for (j = 0, k = 0; j < size_x; j += 2, k++)
+		{
 			image2[i][k] = temp[i][j];
+			//printf("row  image2[%d][%d] = %lf\n", i, k, image2[i][k]);
+		}
 
 	//free(temp); // d_free(size_x, size_y, temp);
 }
@@ -1612,19 +1798,25 @@ void column_analysis(double* h, int F_length, int size_x, int size_y, double** i
 				index = j - margin + k;
 				if (index < 0) index = -index;
 				else if (index >= size_y) index = (2 * size_y - index - 2);
-				sum += h[k] * image1[i][index];
+				sum += h[k] * image1[index][i];
 			}
 			if (coeff > 1.) sum /= coeff;
-			/*	if (sum < 0) sum = 0.;
+				if (sum < 0) sum = 0.;
 				else if (sum > 255) sum = 255.;
-			*/
-			temp[i][j] = sum;
+			
+			temp[j][i] = sum;
+			//printf("sum = %lf\n", sum);
+
 		}
-
+	printf("col-----last\n");
 	for (i = 0; i < size_x2; i++)
-		for (j = 0, k = 0; j < size_y; j+=2, k++)
+		for (j = 0, k = 0; j < size_y; j += 2, k++)
+		{
 			image2[k][i] = temp[j][i];
+			//printf("col  image2[%d][%d] = %lf\n", k, i, image2[k][i]);
 
+		}
+	printf("col ==== end===\n");
 	//free(temp); // d_free(size_x2, size_y, temp);
 }
 
@@ -1712,8 +1904,9 @@ int main(int argc, char* argv[]) {
 	printf("	16 : Log Power \n");
 	printf("	17 : Frequency Domain 주파수 영역 필터링 \n");
 	printf("	18 : fourier transform 푸리에 변환  \n");
-	printf("	19 : 이산코사인변환 or 역변환 \n");
+	printf("	19 : 이산코사인변환 or 역변환 책 \n");
 	printf("	20 : Wavelet Transform \n");
+	printf("	21 : 이산코사인변환 or 역변환 수식 \n");
 
 
 	scanf_s("%d", &mod);
@@ -1890,7 +2083,7 @@ int main(int argc, char* argv[]) {
 
 		char* targetImgName = (char*)malloc(20 * sizeof(char));
 
-
+		
 
 		printf("Specification Image : ");
 		scanf_s("%s", targetImgName, 20*sizeof(char)); // 최신버전 문자열 입력
@@ -2334,8 +2527,19 @@ int main(int argc, char* argv[]) {
 
 		if (mode == 1)
 			mFdct(iimg, ioutimg, Row, Col);
-		else if(mode == 2)
+
+			//Fdct(iimg, ioutimg);
+
+		else if (mode == 2)
 			mIdct(iimg, ioutimg, Row, Col);
+			
+			//idct(iimg, ioutimg);
+		else if (mode == 3)
+		{
+			mFdct(iimg, ioutimg, Row, Col);
+			mIdct(ioutimg, ioutimg, Row, Col);
+		}
+
 
 		for (i = 0; i < Row; i++)
 			for (j = 0; j < Col; j++)
@@ -2344,22 +2548,54 @@ int main(int argc, char* argv[]) {
 				else if (ioutimg[i][j] < 0) outimg[i][j] = 0;
 				else outimg[i][j] = (uchar)ioutimg[i][j];
 			}
-		
+		imgSub(img, outimg, Row, Col);
+
 	}
 	if (mod == 20) // 웨이블렛 변환
 	{
 		int i, j;
 		double **dimage1, **dimage2, **dimage3;
+		int Row2, Col2;
+		Row2 = Row / 2;
+		Col2 = Col / 2;
+
+		char* name1 = (char*)malloc(20 * sizeof(char));
 
 		dimage1 = d_alloc(Row, Col);
-		dimage2 = d_alloc(Row/2, Col);
-		dimage3 = d_alloc(Row/2, Col/2);
+		dimage2 = d_alloc(Row2, Col);
+		dimage3 = d_alloc(Row2, Col2);
 
 		conv_uc_to_d(Row, Col, img, dimage1);
 		row_analysis(A97L1, A97H1_l, Row, Col, dimage1, dimage2);
 		column_analysis(A97L1, A97L1_l, Row, Col, dimage2, dimage3);
+		conv_d_to_uc(Row2, Col2, dimage3, outimg);
 
-		conv_d_to_uc(Row, Col, dimage3, outimg);
+		printf("complete first\n");
+
+		//column_analysis(A97H1, A97H1_l, Row, Col, dimage2, dimage3);
+		//write_dmatrix(Row2, Col2, dimage3, name1);
+		
+
+
+
+
+	}
+	if (mod == 21)
+	{
+		int i, j;
+		double** dimg, ** doutimg, **doutimg2;
+		int Row2, Col2;
+
+		dimg = d_alloc(Row, Col);
+		doutimg = d_alloc(Row, Col);
+		doutimg2 = d_alloc(Row, Col);
+
+		conv_uc_to_d(Row, Col, img, dimg);
+		cosTrans8(dimg, doutimg, Row, Col);
+		cosInverseTrans8(doutimg, doutimg, Row, Col);
+		//dmIdct(doutimg, doutimg, Row, Col);
+
+		conv_d_to_uc(Row, Col, doutimg, outimg);
 
 	}
 
