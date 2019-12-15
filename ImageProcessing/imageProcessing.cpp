@@ -198,7 +198,7 @@ void Negative(uchar** img, uchar** Result, int Row, int Col) // Nagative 효과 넣
 
 	for (i = 0; i < Row; i++)
 		for (j = 0; j < Col; j++)
-			Result[i][j] = 255 - img[i][j];
+			Result[i][j] = 255 - img[i][j]; // 이미지의 각 픽셀 값들을 255에서 빼줌
 
 }
 
@@ -299,7 +299,6 @@ void AdaptiveBinary2(uchar** img, uchar** out, int Row, int Col)
 		}
 	}
 }
-
 void AdaptiveBinary1(uchar** img, uchar** out, int Row, int Col)
 {
 	int i, j;
@@ -311,8 +310,6 @@ void AdaptiveBinary1(uchar** img, uchar** out, int Row, int Col)
 		}
 	}
 }
-
-
 void AdaptiveBinary0(uchar** img, uchar** out, int Row, int Col)
 {
 	int i, j;
@@ -332,7 +329,7 @@ void makeBinary(uchar** img, uchar** out, int Row, int Col, double avg) // 이미�
 	int i, j;
 	for (i = 0; i < Row; i++) {
 		for (j = 0; j < Col; j++) {
-			if (img[i][j] > avg) out[i][j] = 255; // Change value for book with avg-30
+			if (img[i][j] > avg) out[i][j] = 255; 
 			else out[i][j] = 0; // 평균보다 큰 값은 255, 작은 값은 0 대입
 
 		}
@@ -341,8 +338,8 @@ void makeBinary(uchar** img, uchar** out, int Row, int Col, double avg) // 이미�
 
 
 
-void BitSlicing(uchar** img, uchar** Result, int Row, int Col, int position)
-{
+void BitSlicing(uchar** img, uchar** Result, int Row, int Col, int position) 
+{  // 해당 position 값에 맞는 mask값을 통해 이미지를 구함
 	int i, j;
 	uchar mask = 0x01;
 	mask <<= position;
@@ -404,8 +401,8 @@ void BitMasking(uchar** in1Img, uchar** outImg, int Row, int Col, int position) 
 		}
 
 }
-void ImageCombine(uchar** img, uchar** tmpimg, uchar** outimg, int Row, int Col, int position, int direction) // 7부터 position까지의 비트이미지를 합성
-{
+void ImageCombine(uchar** img, uchar** tmpimg, uchar** outimg, int Row, int Col, int position, int direction) 
+{   // 7부터 position까지의 비트이미지를 합성
 	int i, j, k;
 	uchar mask = 0x01;
 
@@ -739,15 +736,15 @@ void contrastStreching(uchar** img, uchar** outimg, int X_Size, int Y_Size)
 	for(i = 0; i < Y_Size; i++)
 		for (j = 0; j < X_Size; j++)
 		{
-			histogram[img[i][j]]++;
+			histogram[img[i][j]]++; // 영상의 히스토그램을 구함
 		}
-	for(i = 0; i < 256; i++)
-		if (histogram[i])
+	for(i = 0; i < 256; i++) // 히스토그램의 최솟값을 구함
+		if (histogram[i]) 
 		{
-			min = i;
-			break;
+			min = i; 
+			break; 
 		}
-	for(i = 255; i >= 0; i--)
+	for(i = 255; i >= 0; i--) // 히스토그램의 최댓값을 구함
 		if (histogram[i])
 		{
 			max = i;
@@ -854,6 +851,7 @@ void convolution0(double** h, int F_length, int size_x, int size_y, uchar** imag
 		}
 	}
 }
+
 void Bubble_sort(uchar* Sort, uchar* median_value, int Mode, int filterSize)
 {
 	int i, x;
@@ -878,8 +876,9 @@ void Bubble_sort(uchar* Sort, uchar* median_value, int Mode, int filterSize)
 		* median_value = (uchar)Sort[filterSize * filterSize / 2]; // median filter의 중앙값을 필터내의 중간값으로 설정
 	else if (Mode == 1)
 		* median_value = (uchar)Sort[filterSize * filterSize - 1]; // median filter의 중앙값을 필터내의 최대값으로 설정
-
 }
+
+
 void Bubble_sort1(uchar* Sort, uchar* median_value, int Mode, int filterSize)
 {
 	int i, x;
@@ -906,6 +905,8 @@ void Bubble_sort1(uchar* Sort, uchar* median_value, int Mode, int filterSize)
 		* median_value = (uchar)Sort[filterSize - 1]; // median filter의 중앙값을 필터내의 최대값으로 설정
 
 }
+
+
 void median(uchar** inImg, uchar** outImg, int ROW, int COL, int Mode, int filterSize) // Median Filtering
 {
 	int i, j, x, y, z, count = 0;
@@ -1251,13 +1252,11 @@ void fft(double* X_re, double* X_im, int N)
 				X_im[m1] = X_im[m1] + X_im[m2];
 				phase = -2.0 * M_PI * j / num_of_elements;
 				X_re[m2] = X_temp_re * cos(phase) - X_temp_im * sin(phase);
-				X_im[m2] = X_temp_re * sin(phase) + X_temp_im * cos(phase); // <<<<
+				X_im[m2] = X_temp_re * sin(phase) + X_temp_im * cos(phase); 
 			}
 			m1 += size_of_butterfly;
 			m2 += size_of_butterfly;
 		}
-//		printf("--num_of_stages : %d, num_of_elements : %d, num_of_sections : %d, size_of_butterfly : %d \n", num_of_stages, num_of_elements, num_of_sections, size_of_butterfly);
-
 
 		num_of_elements >>= 1;
 		num_of_sections <<= 1;
@@ -1278,7 +1277,7 @@ int fft_2d(double** X_re, double** X_im, int N, int Mode) // 고속 푸리에 변환
 	if ((temp_im = (double *)malloc(sizeof(double) * N)) == NULL)
 		return -1;
 
-	if (Mode == 0)
+	if (Mode == 1)
 	{
 		// Processing for ROW
 		for (i = 0; i < N; i++)
@@ -1300,28 +1299,6 @@ int fft_2d(double** X_re, double** X_im, int N, int Mode) // 고속 푸리에 변환
 			}
 		}
 
-	}
-	else if (Mode == 1)
-	{
-		// Processing for ROW
-		for (i = 0; i < N; i++)
-			fft(X_re[i], X_im[i], N);
-
-		// Processing for COLUMN
-		for (j = 0; j < N; j++)
-		{
-			for (i = 0; i < N; i++)
-			{
-				temp_re[i] = X_re[i][j];
-				temp_im[i] = X_im[i][j];
-			}
-			fft(temp_re, temp_im, N);
-			for (i = 0; i < N; i++)
-			{
-				X_re[i][j] = temp_re[i] / N;
-				X_im[i][j] = temp_im[i] / N;
-			}
-		}
 	}
 	else if (Mode == 2)
 	{
@@ -1347,8 +1324,6 @@ int fft_2d(double** X_re, double** X_im, int N, int Mode) // 고속 푸리에 변환
 				temp_re[i] = X_re[i][j] * pow(-1, i);
 				temp_im[i] = X_im[i][j] * pow(-1, i);
 			}
-
-
 			fft(temp_re, temp_im, N);
 			for (i = 0; i < N; i++)
 			{
@@ -1375,7 +1350,20 @@ void imgSub(uchar** img1, uchar** img2, int Row, int Col)
 		}
 
 }
+void imgSubResult(uchar** img1, uchar** img2, uchar** outimg, int Row, int Col)
+{
+	int i, j, sub;
+	for (i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			sub = 0;
+			sub = img1[i][j] - img2[i][j];
+			if (sub > 255) sub = 255;
+			else if (sub < 0) sub = 0;
+			else outimg[i][j] = sub;
+		}
 
+}
 /* integer DCT & IDCT */
 
 static int dct_buffer[8][8] = {
@@ -1448,7 +1436,38 @@ void mFdct(int** PEL, int** Coeff, int Row, int Col)
 	
 
 }
+void mdFdct(double** PEL, double** Coeff, int Row, int Col)
+{
+	int i, j, k;
+	long dd;
+	double t[8][8];
+	int x, y;
 
+
+	for (y = 0; y < Row; y += 8)
+		for (x = 0; x < Col; x += 8)
+		{
+			for (i = 0; i < 8; i++)
+				for (j = 0; j < 8; j++)
+				{
+					dd = 0;
+					for (k = 0; k < 8; k++)
+						dd += (long)PEL[i + y][k + x] * dct_buffer[j][k];
+					t[i][j] = ((dd + 2048) >> 12);
+				}
+
+			for (i = 0; i < 8; i++)
+				for (j = 0; j < 8; j++)
+				{
+					dd = 0;
+					for (k = 0; k < 8; k++)
+						dd += (long)t[k][i] * dct_buffer[j][k];
+					Coeff[j + y][i + x] = ((dd + 16384) >> 15);
+				}
+		}
+
+
+}
 // Inverse DCT  original
 void idct(int** Coeff, int** PEL)
 {
@@ -1475,7 +1494,6 @@ void idct(int** Coeff, int** PEL)
 				dd += (long)t[k][i] * dct_buffer[k][j];
 			PEL[i][j] = ((dd + 16384) / 32768);
 		}
-		
 
 }
 
@@ -1543,14 +1561,12 @@ void dmIdct(double** Coeff, double** PEL, int Row, int Col)
 double C(int u)
 {
 	double d;
+
 	if (u == 0)
-	{
-		d = 1 / pow(2, 0.5);
-	}
+		d = 1. / sqrt(2);
 	else if (u > 0)
-	{
-		d = 1;
-	}
+		d = 1.;
+	
 	return d;
 }
 
@@ -1575,47 +1591,10 @@ void cosTrans(double** img, double** outimg, int Row, int Col)
 				}
 			//printf("temp = %lf\n", temp);
 
-			outimg[i][j] = ((4 * C(i) * C(j)) / (Row * Col)) * temp;
+			outimg[i][j] = ((4. * C(i) * C(j)) / (Row * Col)) * temp;
 			//printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
 		}
 	
-}
-
-void cosTrans8(double** img, double** outimg, int Row, int Col)
-{
-	int i, j, x, y, u, v;
-	double tempU, tempV;
-	long temp = 0;
-
-
-	for (i = 0; i < Row; i+=8)
-		for (j = 0; j < Col; j+=8)
-		{
-			for (u = 0; u < 8; u++)
-				for (v = 0; v < 8; v++)
-				{
-					
-					temp = 0;
-					for (y = 0; y < 8; y++)
-						for (x = 0; x < 8; x++)
-						{
-
-							tempU = ((2 * y + 1) * u * M_PI) / (2 * 8);
-							tempV = ((2 * x + 1) * v * M_PI) / (2 * 8);
-
-							temp += img[y+i][x+j] * cos(tempU) * cos(tempV);
-							//printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
-						}
-					//printf("temp = %lf\n", temp);
-
-					outimg[i + u][j + v] = ((4 * C(u) * C(v)) / (8 * 8)) * temp;
-					//printf("outimg[%d][%d] = %lf\n", i+y, j+x, outimg[i][j]);
-
-				}
-
-			
-		}
-
 }
 
 void cosInverseTrans(double** img, double** outimg, int Row, int Col)
@@ -1638,9 +1617,43 @@ void cosInverseTrans(double** img, double** outimg, int Row, int Col)
 				}
 			//printf("temp = %lf\n", temp);
 
-			outimg[i][j] = (4  / (Row * Col)) * temp;
+			outimg[i][j] = (4 / (Row * Col)) * temp;
 			printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
 		}
+
+}
+
+void cosTrans8(double** img, double** outimg, int Row, int Col)
+{
+	int i, j, x, y, u, v;
+	double tempU, tempV;
+	long temp = 0;
+
+	for (i = 0; i < Row; i+=8)
+		for (j = 0; j < Col; j+=8)
+		{
+			for (u = 0; u < 8; u++)
+				for (v = 0; v < 8; v++)
+				{
+					
+					temp = 0;
+					for (y = 0; y < 8; y++)
+						for (x = 0; x < 8; x++)
+						{
+							tempU = ((2 * x + 1) * u * M_PI) / (2. * 8.);
+							tempV = ((2 * y + 1) * v * M_PI) / (2. * 8.);
+
+							temp += img[y+i][x+j] * cos(tempU) * cos(tempV);
+							//printf("outimg[%d][%d] = %lf\n", i, j, outimg[i][j]);
+						}
+					//printf("temp = %lf\n", temp);
+
+					outimg[i + u][j + v] = ((C(u) * C(v)) / 4.) * temp;
+					//printf("outimg[%d][%d] = %lf\n", i+y, j+x, outimg[i][j]);
+
+				}
+		}
+	printf("complete dct!!\n");
 
 }
 
@@ -1648,8 +1661,7 @@ void cosInverseTrans8(double** img, double** outimg, int Row, int Col)
 {
 	int i, j, x, y, u, v;
 	double tempU, tempV;
-	double temp = 0;
-
+	double temp = 0.;
 
 	for (i = 0; i < Row; i += 8)
 		for (j = 0; j < Col; j += 8)
@@ -1658,26 +1670,22 @@ void cosInverseTrans8(double** img, double** outimg, int Row, int Col)
 			for (y = 0; y < 8; y++)
 				for (x = 0; x < 8; x++)
 				{
-					temp = 0;
+					temp = 0.;
 
 					for (u = 0; u < 8; u++)
 						for (v = 0; v < 8; v++)
 						{
-							tempU = ((2 * y + 1) * u * M_PI) / (2 * 8);
-							tempV = ((2 * x + 1) * v * M_PI) / (2 * 8);
+							tempU = ((2 * (double)x + 1) * u * M_PI) / 16.;
+							tempV = ((2 * (double)y + 1) * v * M_PI) / 16.;
 
-							temp += img[u+i][v+j] * C(u) * C(v) * cos(tempU) * cos(tempV);
-							//printf("temp = %lf\n", temp);
-							//printf("img[%d][%d] = %lf\n", u + i, v + j, img[i][j]);
-
+							temp += img[i + u][j + v] * C(u) * C(v) * cos(tempU) * cos(tempV);
 						}
-					//printf("temp888 = %lf\n", temp);
 
-					outimg[i + y][j + x] = (4 / (8 * 8)) * temp;
-					//outimg[i + y][j + x] = 0.0625 * temp;
-					printf("outimg[%d][%d] = %lf\n", i + y, j + x, outimg[i+y][j+y]);
+					outimg[i + y][j + x] = temp / 4.;
+					//printf("outimg[%d][%d] = %lf\n", i + y, j + x, outimg[i+y][j+y]);
 				}
 		}
+	printf("complete idct!!\n");
 }
 
 // Antonini Filter
@@ -1842,6 +1850,7 @@ void conv_d_to_uc(int Row, int Col, double** dimage, uchar** ucimage)
 			else ucimage[i][j] = (uchar)dimage[i][j];
 		}
 }
+
 void psnruc(uchar** image1, uchar** image2, int Row, int Col, double* MSE, double* PSNR)
 {
 	int i, j;
@@ -1859,6 +1868,599 @@ void psnruc(uchar** image1, uchar** image2, int Row, int Col, double* MSE, doubl
 
 	printf("PSNR = %10.4lf\n", *PSNR);
 
+}
+
+void BinaryErosionO(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, count;
+	int indexi, indexj;
+	int maski, maskj;
+	int N_MASK[3][3] = { 0, 1, 0, 1, 1, 1, 0, 1, 0 };
+
+	//int** N_MASK;
+	//N_MASK = i_alloc(Size, Size);
+
+	for(i= -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			count = 0;
+			for(maski = 0; maski <= 2 * Size; maski++)
+				for (maskj = 0; maskj <= 2 * Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						if (Data_In[indexi][indexj] == 255) count++;
+					}
+				}
+			if (count == 5)
+				Data_Out[i + Size][j + Size] = 255;
+			else
+				Data_Out[i + Size][j + Size] = 0;
+		}
+
+}
+
+void BinaryErosion(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, count;
+	int indexi, indexj;
+	int maski, maskj;
+	int N_MASK[3][3] = { 0, 1, 0, 1, 1, 1, 0, 1, 0 };
+
+	for (i = -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			count = 0;
+			for (maski = 0; maski < Size; maski++)
+				for (maskj = 0; maskj < Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						// This is a symmetric method
+
+						if (indexi < 0) indexi = -indexi;
+						else if (indexi >= Row) indexi = 2 * Row - indexi - 1;
+						if (indexj < 0) indexj = -indexj;
+						else if (indexj >= Col) indexj = 2 * Col - indexj - 1;
+
+						if (Data_In[indexi][indexj] == 255) count++;
+					}
+				}
+			if (count == 5)
+				Data_Out[i + Size][j + Size] = 255;
+			else
+				Data_Out[i + Size][j + Size] = 0;
+		}
+
+}
+void BinaryDilationO(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, count;
+	int indexi, indexj;
+	int maski, maskj;
+	int** N_MASK;
+	N_MASK = i_alloc(Size, Size);
+
+	for (i = -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			count = 0;
+			for (maski = 0; maski <= 2 * Size; maski++)
+				for (maskj = 0; maskj <= 2 * Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						// This is a symmetric method
+
+						if (indexi < 0) indexi = -indexi;
+						else if (indexi >= Row) indexi = 2 * Row - indexi - 1;
+						if (indexj < 0) indexj = -indexj;
+						else if (indexj >= Col) indexj = 2 * Col - indexj - 1;
+
+						if (Data_In[indexi][indexj] == 255) count++;
+					}
+				}
+			if (count)
+				Data_Out[i + Size][j + Size] = 255;
+			else
+				Data_Out[i + Size][j + Size] = 0;
+		}
+
+}
+
+void BinaryDilation(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, count;
+	int indexi, indexj;
+	int maski, maskj;
+	int N_MASK[3][3] = { 0, 1, 0, 1, 1, 1, 0, 1, 0 };
+
+
+	for (i = -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			count = 0;
+			for (maski = 0; maski <  Size; maski++)
+				for (maskj = 0; maskj < Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						// This is a symmetric method
+
+						if (indexi < 0) indexi = -indexi;
+						else if (indexi >= Row) indexi = 2 * Row - indexi - 1;
+						if (indexj < 0) indexj = -indexj;
+						else if (indexj >= Col) indexj = 2 * Col - indexj - 1;
+
+						if (Data_In[indexi][indexj] == 255) count++;
+					}
+				}
+			if (count)
+				Data_Out[i + Size][j + Size] = 255;
+			else
+				Data_Out[i + Size][j + Size] = 0;
+		}
+}
+
+
+void BinaryOpening(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size)
+{
+	uchar** TempBlk;
+	TempBlk = uc_alloc(Row, Col);
+	BinaryErosion(Data_In, TempBlk, Row, Col, Size);
+	BinaryDilation(TempBlk, Data_Out, Row, Col, Size);
+
+}
+
+void BinaryClosing(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size)
+{
+	uchar** TempBlk;
+	TempBlk = uc_alloc(Row, Col);
+	BinaryDilation(Data_In, TempBlk, Row, Col, Size);
+	BinaryErosion(TempBlk, Data_Out, Row, Col, Size);
+
+}
+
+
+void ErosionO(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, smin, value;
+	int indexi, indexj;
+	int maski, maskj;
+	Size = 3;
+	int N_MASK[3][3] = { 0, 1, 0, 1, 1, 1, 0, 1, 0 };
+	//N_MASK = i_alloc(Size, Size);
+	
+	for (i = -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			smin = 256;
+			for (maski = 0; maski <= 2 * Size; maski++)
+				for (maskj = 0; maskj <= 2 * Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						// This is a symmetric method
+
+						if (indexi < 0) indexi = -indexi;
+						else if (indexi >= Row) indexi = 2 * Row - indexi - 1;
+						if (indexj < 0) indexj = -indexj;
+						else if (indexj >= Col) indexj = 2 * Col - indexj - 1;
+
+						// This is a circular method
+						/*
+						if(indexi < 0) indexi += Row;
+						else if(indexi > Row) indexi -= Row;
+						if(indexj < 0) indexj += Col;
+						else if(indexj > Col) indexj -= Col;
+						*/
+						if (Data_In[indexi][indexj] < smin)
+						{
+							value = (int)Data_In[indexi][indexj] - (int)N_MASK[maski][maskj];
+							if (value < smin) smin = value;
+						}
+
+					}
+				}
+			Data_Out[i + Size][j + Size] = (smin < 0) ? (uchar)0 : (uchar)smin;
+		}
+}
+
+void Erosion(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, smin, value;
+	int indexi, indexj;
+	int maski, maskj;
+	Size = 3;
+	int N_MASK[3][3] = { 0, 1, 0, 1, 1, 1, 0, 1, 0 };
+	//N_MASK = i_alloc(Size, Size);
+
+	for (i = -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			smin = 256;
+			for (maski = 0; maski < Size; maski++)
+				for (maskj = 0; maskj < Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						// This is a symmetric method
+
+						if (indexi < 0) indexi = -indexi;
+						else if (indexi >= Row) indexi = 2 * Row - indexi - 1;
+						if (indexj < 0) indexj = -indexj;
+						else if (indexj >= Col) indexj = 2 * Col - indexj - 1;
+
+						if (Data_In[indexi][indexj] < smin)
+						{
+							value = (int)Data_In[indexi][indexj] - (int)N_MASK[maski][maskj];
+							if (value < smin) smin = value;
+						}
+
+					}
+				}
+			Data_Out[i + Size][j + Size] = (smin < 0) ? (uchar)0 : (uchar)smin;
+		}
+
+}
+
+void DilationO(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, smax, value;
+	int indexi, indexj;
+	int maski, maskj;
+	int** N_MASK;
+	N_MASK = i_alloc(Size, Size);
+
+	for (i = -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			smax = 0;
+			for (maski = 0; maski <= 2 * Size; maski++)
+				for (maskj = 0; maskj <= 2 * Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						// This is a symmetric method
+
+						if (indexi < 0) indexi = -indexi;
+						else if (indexi >= Row) indexi = 2 * Row - indexi - 1;
+						if (indexj < 0) indexj = -indexj;
+						else if (indexj >= Col) indexj = 2 * Col - indexj - 1;
+
+						if (Data_In[indexi][indexj] > smax)
+						{
+							value = (int)Data_In[indexi][indexj] + (int)N_MASK[maski][maskj];
+							if (value > smax) smax = value;
+						}
+
+					}
+				}
+			Data_Out[i + Size][j + Size] = (smax > 255) ? (uchar)255 : (uchar)smax;
+		}
+
+}
+void Dilation(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size) // Size : kernel Size
+{
+	int i, j, smax, value;
+	int indexi, indexj;
+	int maski, maskj;
+	int N_MASK[3][3] = { 0, 1, 0, 1, 1, 1, 0, 1, 0 };
+
+	for (i = -Size; i < Row - Size; i++)
+		for (j = -Size; j < Col - Size; j++)
+		{
+			smax = 0;
+			for (maski = 0; maski < Size; maski++)
+				for (maskj = 0; maskj < Size; maskj++)
+				{
+					if (N_MASK[maski][maskj] != 0)
+					{
+						indexi = i + maski;
+						indexj = j + maskj;
+
+						// This is a symmetric method
+						if (indexi < 0) indexi = -indexi;
+						else if (indexi >= Row) indexi = 2 * Row - indexi - 1;
+						if (indexj < 0) indexj = -indexj;
+						else if (indexj >= Col) indexj = 2 * Col - indexj - 1;
+
+						if (Data_In[indexi][indexj] > smax)
+						{
+							value = (int)Data_In[indexi][indexj] + (int)N_MASK[maski][maskj];
+							if (value > smax) smax = value;
+						}
+
+					}
+				}
+			Data_Out[i + Size][j + Size] = (smax > 255) ? (uchar)255 : (uchar)smax;
+		}
+}
+
+void Opening(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size)
+{
+	uchar** TempBlk;
+	TempBlk = uc_alloc(Row, Col);
+	Erosion(Data_In, TempBlk, Row, Col, Size);
+	Dilation(TempBlk, Data_Out, Row, Col, Size);
+
+}
+
+void Closing(uchar** Data_In, uchar** Data_Out, int Row, int Col, int Size)
+{
+	uchar** TempBlk;
+	TempBlk = uc_alloc(Row, Col);
+	Dilation(Data_In, TempBlk, Row, Col, Size);
+	Erosion(TempBlk, Data_Out, Row, Col, Size);
+
+}
+
+void AddSub(uchar** img, uchar** Result, int Row, int Col, int flag, int factor)
+{
+	int i, j;
+	double tmp;
+
+	for(i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			if (flag == 0)
+			{
+				tmp = img[i][j] + factor;
+
+				if (tmp > 255) tmp = 255;
+				else if (tmp < 0) tmp = 0;
+
+				Result[i][j] = tmp;
+			}
+			else
+			{
+				tmp = img[i][j] - factor;
+
+				if (tmp > 255) tmp = 255;
+				else if (tmp < 0) tmp = 0;
+
+				Result[i][j] = tmp;
+			}
+		}
+}
+
+void nInterpolation(uchar** img, uchar** outimg, int Row, int Col, double zoom)
+{ // Nearest Neighbor Interpolation (최근접 이웃화소)
+	int i, j, orgR, orgC, newR, newC;
+	double tmpR, tmpC;
+	double zoomScaleFactorR, zoomScaleFactorC;
+	double iR, iC;
+
+	newR = zoom * Row;
+	newC = zoom * Col;
+	printf("newR = %d, newC = %d \n ", newR, newC);
+	for(i = 0; i < newR; i++)
+		for (j = 0; j < newC; j++)
+		{
+			tmpR = i / zoom;
+			tmpC = j / zoom;
+
+			orgR = (int)floor(tmpR);
+			orgC = (int)floor(tmpC);
+
+			outimg[i][j] = img[orgR][orgC];
+			//printf("outimg[%d][%d] = %d\n", i, j, img[orgR][orgC]);
+		}
+
+}
+
+void bsInterpolation(uchar** img, uchar** outimg, int Row, int Col, double zoom)
+{ // B-Spline Interpolation
+	double column[4]; // storage for row interpolation results
+	double a0, a1, a2, a3; // interpolation coefficients
+	double x_plus_1, y_plus_1; // x + 1, y + 1
+	double one_minus_x, one_minus_y; // 1 - x, 1 - y
+	double two_minus_x, two_minus_y; // 2 - x, 2 - y
+	double pixel;				// newly interpolated value
+	int i, j, p, orgR, orgC, newR, newC;
+	double tmpR, tmpC;
+	double zoomScaleFactorR, zoomScaleFactorC;
+
+	newR = zoom * Row;
+	newC = zoom * Col;
+
+	printf("newR = %d, newC = %d \n ", newR, newC);
+
+	for(i = 0; i < newR; i++)
+		for (j = 0; j < newC; j++)
+		{
+			tmpR = i / zoom;
+			tmpC = j / zoom;
+
+			orgR = (int)floor(tmpR);
+			orgC = (int)floor(tmpC);
+
+			zoomScaleFactorR = tmpR - orgR;
+			zoomScaleFactorC = tmpC - orgC;
+
+			if (orgR - 1 < 0 || orgR + 2 >= Row || orgC - 1 < 0 || orgC + 2 >= Col) outimg[i][j] = 0;
+			else
+			{
+				if ((zoomScaleFactorC == 0.0) && (zoomScaleFactorR == 0.0))
+				{
+					outimg[i][j] = img[orgR][orgC];
+					continue;
+				}
+				if (zoomScaleFactorC == 0.0)
+					for (p = 0; p < 4; p++)
+						column[p] = (double)img[orgR - 1][orgC];
+				else
+				{
+					x_plus_1 = zoomScaleFactorC + 1.0;
+					one_minus_x = 1.0 - zoomScaleFactorC;
+					two_minus_x = 2.0 - zoomScaleFactorC;
+					a0 = ((-0.16666666 * x_plus_1 + 1.0) * x_plus_1 - 2.0) * x_plus_1 + 1.33333;
+					a1 = (0.5 * zoomScaleFactorC - 1.0) * zoomScaleFactorC * zoomScaleFactorC + 0.66666667;
+					a2 = (0.5 * one_minus_x - 1.0) * one_minus_x * one_minus_x + 0.66666667;
+					a3 = 1.0 - a0 - a1 - a2;
+					if (zoomScaleFactorR == 0.0)
+					{
+						pixel = a0 * img[orgR][orgC - 1] + a1 * img[orgR][orgC] + a2 * img[orgR][orgC + 1] + a3 * img[orgR][orgC + 2];
+						if (pixel < 0) pixel = 0;
+						else if (pixel > 255) pixel = 255;
+						outimg[i][j] = (uchar)pixel;
+						continue;
+					}
+					else
+					{
+						for (p = 0; p < 4; p++)
+							column[p] = a0 * img[orgR - 1 + p][orgC - 1] + a1 * img[orgR - 1 + p][orgC] + a2 * img[orgR - 1][orgC + 1] + a3 * img[orgR - 1 + p][orgC + 2];
+					}
+				}
+				// interpolate the resulting column
+
+				y_plus_1 = zoomScaleFactorR + 1.0;
+				one_minus_y = 1.0 - zoomScaleFactorR;
+				two_minus_y = 2.0 - zoomScaleFactorR;
+
+				a0 = ((-0.16666666 * y_plus_1 + 1.0) * y_plus_1 - 2.0) * y_plus_1 + 1.33333;
+				a1 = (0.5 * zoomScaleFactorR - 1.0) * zoomScaleFactorR * zoomScaleFactorR + 0.66666667;
+				a2 = (0.5 * one_minus_y - 1.0) * one_minus_y * one_minus_y + 0.66666667;
+				a3 = 1.0 - a0 - a1 - a2;
+
+				pixel = column[0] * a0 + column[1] * a1 + column[2] * a2 + column[3] * a3;
+
+				if (pixel < 0) pixel = 0;
+				else if (pixel > 255) pixel = 255;
+
+				outimg[i][j] = (uchar)pixel;
+
+			}
+		}
+
+}
+
+void bInterpolation(uchar** img, uchar** outimg, int Row, int Col, double zoomR, double zoomC)
+{
+	int i, j, orgR, orgC, newR, newC;
+	double tmpR, tmpC;
+	double zoomScaleFactorR, zoomScaleFactorC;
+	double iR, iC;
+
+	newR = zoomR * Row;
+	newC = zoomC * Col;
+	printf("newR = %d, newC = %d \n ", newR, newC);
+
+	for (i = 0; i < newR; i++)
+		for (j = 0; j < newC; j++)
+		{
+			tmpR = i / zoomR;
+			tmpC = j / zoomC;
+
+			orgR = (int)floor(tmpR);
+			orgC = (int)floor(tmpC);
+
+			zoomScaleFactorR = tmpR - orgR;
+			zoomScaleFactorC = tmpC - orgC;
+
+			if (orgR < 0 || orgR > Row || orgC < 0 || orgC > Col)
+				outimg[i][j] = 0;
+			else
+			{
+				iR = img[orgR][orgC] + zoomScaleFactorR * (img[orgR + 1][orgC] - img[orgR][orgC]);
+				iC = img[orgR][orgC + 1] + zoomScaleFactorC * (img[orgR + 1][orgC + 1] - img[orgR][orgC + 1]);
+
+				outimg[i][j] = (uchar)(iR + zoomScaleFactorC * (iC - iR));
+				//printf("outimg[%d][%d] = %d\n", i, j, (uchar)(iR + zoomScaleFactorC * (iC - iR)));
+
+			}	
+		}
+}
+
+void rotate(uchar** img, uchar** outimg, int Row, int Col, double degree)
+{
+	int i, j;
+
+	double Radius, sinValue, cosValue;
+	double newR, newC;
+	int orgR, orgC, centerR, centerC;
+
+	Radius = degree * (M_PI / 180.0);
+
+	printf("Radius = %lf\n", Radius);
+
+	sinValue = sin(Radius);
+	cosValue = cos(Radius);
+	centerR = Row / 2;
+	centerC = Col / 2;
+
+	for(i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			newR = (i - centerR) * cosValue - (j - centerC) * sinValue + centerR;
+			newC = (i - centerR) * sinValue + (j - centerC) * cosValue + centerC;
+
+			orgR = (int)floor(newR + 0.45);
+			orgC = (int)floor(newC + 0.45);
+			if (orgR < 0 || orgR >= Row || orgC < 0 || orgC >= Col)
+				outimg[i][j] = 0;
+			else
+				outimg[i][j] = img[orgR][orgC];
+		}
+}
+
+void translate(uchar** img, uchar** outimg, int Row, int Col, int moveY, int moveX)
+{
+	int i, j;
+	int newR, newC;
+	for(i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			newR = i + moveY;
+			newC = j + moveX;
+
+			if (newR < 0) newR = 0;
+			else if (newR >= Row) newR = Row - 1;
+
+
+			if (newC < 0) newC = 0;
+			else if (newC >= Col) newC = Col - 1;
+
+			outimg[newR][newC] = img[i][j];
+
+		}
+}
+
+void reflection(uchar** img, uchar** outimg, int Row, int Col, double flip)
+{
+	int i, j;
+
+	for(i = 0; i < Row; i++)
+		for (j = 0; j < Col; j++)
+		{
+			if (flip == 0)
+				outimg[i][j] = img[i][Col - j - 1];
+			else if (flip == 1)
+				outimg[i][j] = img[Row - i - 1][j];
+			else if (flip == 2)
+				outimg[i][j] = img[Row - i - 1][Col - j - 1];
+		}
 }
 
 int main(int argc, char* argv[]) {
@@ -1881,12 +2483,13 @@ int main(int argc, char* argv[]) {
 	int histogramMatch[256];
 	int cdfOfHisto[256];
 	int flag; // average and gaussian filtering
+	double zoomcoeff = 1; // zoom 계수
 
 	srand(time(NULL)); // 랜덤함수 사용
 
 
-	printf("	0 : nagative\n");
-	printf("	1 : mosaic / block\n");
+	printf("	0 : nagative, mosaic(block)\n");
+	printf("	1 : binary image\n");
 	printf("	2 : gamma correction / select(1 :gamma correction / gamma or 2 : average->average)\n");
 	printf("	3 : bit plane(비트 평면 분할) / position\n");
 	printf("	4 : bit plane 합성 영상 / direction(1: 상위비트부터 합성, 2 : 하위비트 부터 합성), position\n");
@@ -1907,7 +2510,8 @@ int main(int argc, char* argv[]) {
 	printf("	19 : 이산코사인변환 or 역변환 책 \n");
 	printf("	20 : Wavelet Transform \n");
 	printf("	21 : 이산코사인변환 or 역변환 수식 \n");
-
+	printf("	22 : Binary Erosion & Dilation \n");
+	printf("	23 : 보간법 \n");
 
 	scanf_s("%d", &mod);
 
@@ -1919,17 +2523,46 @@ int main(int argc, char* argv[]) {
 
 	read_ucmartrix(Row, Col, img, argv[1]);
 
-	if (mod == 0) // nagative
+	if (mod == 0) // nagative, mosiac
 	{
-		Negative(img, outimg, Row, Col);
+		int select;
+		printf("1 : Negative\n");
+		printf("2 : Mosaic\n");
+		printf("select : ");
+		scanf_s("%d", &select);
+
+		if (select == 1)
+			Negative(img, outimg, Row, Col);
+		else if (select == 2)
+		{
+			printf("block : ");
+			scanf_s("%d", &block); // block : 모자이크 블록 크기
+
+			mosaic(img, outimg, Row, Col, block);
+		}
+			
 	}
 
-	if (mod == 1) // mosaic
+	if (mod == 1) // binary image
 	{
-		printf("block : ");
-		scanf_s("%d", &block); // block : 모자이크 블록 크기
+		int select;
+		double avg;
+		avg = average(img, Row, Col);
+		printf("0 : AdaptiveBinary0\n");
+		printf("1 : AdaptiveBinary1\n");
+		printf("2 : AdaptiveBinary2\n");
+		printf("3 : makeBinary(avrage)\n");
+		printf("select : ");
+		scanf_s("%d", &select);
 
-		mosaic(img, outimg, Row, Col, block);
+		if (select == 0)
+			AdaptiveBinary0(img, outimg, Row, Col);
+		else if(select == 1)
+			AdaptiveBinary1(img, outimg, Row, Col);
+		else if(select == 2)
+			AdaptiveBinary2(img, outimg, Row, Col);
+		else
+			makeBinary(img, outimg, Row, Col, avg);
 	}
 
 	if (mod == 2) // gamma correction
@@ -2013,22 +2646,50 @@ int main(int argc, char* argv[]) {
 
 	if (mod == 5) // circle 부분 원형 모자이크
 	{
-		printf("diameter, block : ");
-		scanf_s("%d %d", &diameter, &block); // 원의 지름 (circle img)
+		int select;
+		printf("1 : circle 이미지만 생성 / 2 : 부분 원형 모자이크\n");
+		printf("select : ");
+		scanf_s("%d", &select);
 
-		outimg1 = uc_alloc(Row, Col);
-		outimg2 = uc_alloc(Row, Col);
-		img1 = uc_alloc(Row, Col);
-		img2 = uc_alloc(Row, Col);
-		cirimg = uc_alloc(Row, Col);
-		mosaimg = uc_alloc(Row, Col);
+		if (select == 1)
+		{
+			printf("diameter : ");
+			scanf_s("%d", &diameter);
+			Circle(outimg, Row, Col, diameter); // 기본 Circle 이미지 생성
+		}
+		if (select == 2)
+		{
+			printf("diameter, block : ");
+			scanf_s("%d %d", &diameter, &block); // 원의 지름 (circle img)
 
-		mosaic(img, mosaimg, Row, Col, block); // 기본 모자이크 이미지 생성
-		Circle(cirimg, Row, Col, diameter); // 기본 Circle 이미지 생성
+			outimg1 = uc_alloc(Row, Col);
+			outimg2 = uc_alloc(Row, Col);
+			img1 = uc_alloc(Row, Col);
+			img2 = uc_alloc(Row, Col);
+			cirimg = uc_alloc(Row, Col);
+			mosaimg = uc_alloc(Row, Col);
 
-		MaskAnd(mosaimg, cirimg, outimg1, Row, Col); // 모자이크 써클 부분만 추출
-		MaskOr(img, cirimg, outimg2, Row, Col); // 기본 이미지를 Or연산으로 모자이크 할 부분 제거
-		MaskAdd(outimg1, outimg2, outimg, Row, Col);
+			mosaic(img, mosaimg, Row, Col, block); // 기본 모자이크 이미지 생성
+			Circle(cirimg, Row, Col, diameter); // 기본 Circle 이미지 생성
+
+			MaskAnd(mosaimg, cirimg, outimg1, Row, Col); // 모자이크 써클 부분만 추출
+			MaskOr(img, cirimg, outimg2, Row, Col); // 기본 이미지를 Or연산으로 모자이크 할 부분 제거
+			MaskAdd(outimg1, outimg2, outimg, Row, Col);
+		}
+		if (select == 3)
+		{
+			printf("diameter : ");
+			scanf_s("%d", &diameter);
+
+			cirimg = uc_alloc(Row, Col);
+
+			//Circle(cirimg, Row, Col, diameter); // 기본 Circle 이미지 생성		
+			//MaskAnd(img, cirimg, outimg, Row, Col); 
+			//MaskOr(img, cirimg, outimg, Row, Col);
+			Square(outimg, Row, Col, diameter);
+
+		}
+
 
 	}
 	if (mod == 6) // circle 부분 모자이크 - 중심 지정 ( 1 : 원형, 2 : 사각형)
@@ -2231,8 +2892,6 @@ int main(int argc, char* argv[]) {
 		int min = 255, max = 0;
 		uchar LUT[256];
 		double scaleFactor, tmp;
-
-
 
 		for (i = 0; i < 256; i++) // 초기화
 			histogram[i] = 0;
@@ -2437,15 +3096,15 @@ int main(int argc, char* argv[]) {
 					fourier_img[i][j] = fourier_img[i][j] * pow(-1, i + j);
 
 		}
-		if (select == 3)
+		if (select == 3)  // Gaussian Filter
 		{
 			for (i = 0; i < Row; i++)
 				for (j = 0; j < Col; j++)
 				{
 					diameter = sqrt((Row / 2. - i) * (Row / 2. - i) + (Col / 2. - j) * (Col / 2. - j));
-					if (filter == 1)
+					if (filter == 1) 	// For Lowpass Filter
 						Gaussian[i][j] = exp(-(diameter * diameter) / (2 * cutoff * cutoff));
-					else if(filter == 2)
+					else if(filter == 2)  // For HighPass Filter
 						Gaussian[i][j] = 1 - exp(-(diameter * diameter) / (2 * cutoff * cutoff));
 
 					fourier_img[i][j] *= Gaussian[i][j];
@@ -2484,9 +3143,15 @@ int main(int argc, char* argv[]) {
 	if (mod == 18)
 	{
 		double** fourierimg, ** imimg;
-		int temp;
+		int temp, select;
 		fourierimg = d_alloc(Row, Col);
 		imimg = d_alloc(Row, Col);
+
+		printf("1 : 푸리에 변환\n");
+		printf("2 : 중앙으로 이동\n");
+		printf("select : ");
+		scanf_s("%d", &select);
+
 
 		for (i = 0; i < Row; i++)
 			for (j = 0; j < Col; j++)
@@ -2494,7 +3159,7 @@ int main(int argc, char* argv[]) {
 				fourierimg[i][j] = (double)img[i][j];
 				imimg[i][j] = 0.;
 			}
-		fft_2d(fourierimg, imimg, Row, 2); // N : N만큼씩 처리(한줄에)
+		fft_2d(fourierimg, imimg, Row, select); // N : N만큼씩 처리(한줄에)
 		// LogImg(fourierimg, outimg);
 		conv_d_to_uc(Row, Col, fourierimg, outimg);
 		/*
@@ -2554,31 +3219,89 @@ int main(int argc, char* argv[]) {
 	if (mod == 20) // 웨이블렛 변환
 	{
 		int i, j;
-		double **dimage1, **dimage2, **dimage3;
+		double **dimage1, **dimage2, **dimage3, **dimage4;
 		int Row2, Col2;
 		Row2 = Row / 2;
 		Col2 = Col / 2;
+		int tmp;
 
 		char* name1 = (char*)malloc(20 * sizeof(char));
+		char* buf;
+
 
 		dimage1 = d_alloc(Row, Col);
 		dimage2 = d_alloc(Row2, Col);
 		dimage3 = d_alloc(Row2, Col2);
+		dimage4 = d_alloc(Row2, Col2);
+
 
 		conv_uc_to_d(Row, Col, img, dimage1);
 		row_analysis(A97L1, A97H1_l, Row, Col, dimage1, dimage2);
 		column_analysis(A97L1, A97L1_l, Row, Col, dimage2, dimage3);
-		conv_d_to_uc(Row2, Col2, dimage3, outimg);
-
+		//conv_d_to_uc(Row2, Col2, dimage3, outimg);
 		printf("complete first\n");
 
-		//column_analysis(A97H1, A97H1_l, Row, Col, dimage2, dimage3);
-		//write_dmatrix(Row2, Col2, dimage3, name1);
+		//conv_d_to_uc(Row2, Col2, dimage3, img);
+		column_analysis(A97H1, A97H1_l, Row, Col, dimage3, dimage4);
+		conv_d_to_uc(Row2, Col2, dimage4, outimg);
+
+
+		/*
 		
+		
+		for(i = 0; i < Row2/2; i++)
+			for (j = Col2; j < Col; j++)
+			{
+
+				//outimg[i][j] = (uchar)dimage3[i][j];
+
+				tmp = dimage3[i][j] * 128;
+				if (tmp > 255) tmp = 255;
+				else if (tmp < 0) tmp = 0;
+				else	outimg[i][j] = (uchar)tmp;
+
+				printf("tmp[%d][%d] = %d\n", i, j, tmp);
+			}
+			
+		*/
+		//write_dmatrix(Row2, Col2, dimage3, argv[4]);
+		//conv_d_to_uc(Row2, Col2, dimage3, outimg);
+		//row_analysis(A97H1, A97H1_l, Row, Col, dimage1, dimage2);
+		//column_analysis(A97L1, A97L1_l, Row, Col, dimage2, dimage3);
 
 
+		/*
+		for (i = Row2; i < Row; i++)
+			for (j = 0; j < Col2/2; j++)
+			{
 
+				//outimg[i][j] = (uchar)dimage3[i][j];
 
+				tmp = dimage3[i][j] * 128;
+				if (tmp > 255) tmp = 255;
+				else if (tmp < 0) tmp = 0;
+				else	outimg[i][j] = (uchar)tmp;
+
+				printf("tmp1[%d][%d] = %d\n", i, j, tmp);
+			}
+			*/
+
+		//column_analysis(A97H1, A97H1_l, Row, Col, dimage2, dimage3);
+
+		//conv_d_to_uc(Row2, Col2, dimage3, outimg);
+
+		/*
+		
+		for (i = 0; i < Row; i++)
+			for (j = 0; j < Col; j++)
+			{
+				tmp = outimg[i][j] * 100;
+				if (tmp > 255) tmp = 255;
+				else if (tmp < 0) tmp = 0;
+				else	outimg[i][j] = tmp;
+			}
+		*/
+			
 	}
 	if (mod == 21)
 	{
@@ -2591,15 +3314,205 @@ int main(int argc, char* argv[]) {
 		doutimg2 = d_alloc(Row, Col);
 
 		conv_uc_to_d(Row, Col, img, dimg);
-		cosTrans8(dimg, doutimg, Row, Col);
-		cosInverseTrans8(doutimg, doutimg, Row, Col);
+		cosTrans8(dimg, doutimg2, Row, Col);
+
+		//mdFdct(dimg, doutimg, Row, Col);
+		cosInverseTrans8(doutimg2, doutimg, Row, Col);
 		//dmIdct(doutimg, doutimg, Row, Col);
+		//LogImg(doutimg, outimg);
 
 		conv_d_to_uc(Row, Col, doutimg, outimg);
 
 	}
 
-	write_ucmatrix(Row, Col, outimg, argv[4]);
+	if (mod == 22)
+	{
+		int i, j;
+		int kernelSize;
+		int select;
+		double avg;
+		uchar** tmpimg, **tmpimg1, **tmpimg2;
+
+		tmpimg = uc_alloc(Row, Col);
+		tmpimg1 = uc_alloc(Row, Col);
+		tmpimg2 = uc_alloc(Row, Col);
+
+		printf("	1 : BinaryErosion \n");
+		printf("	2 : BinaryDilation \n");
+		printf("	3 : Erosion \n");
+		printf("	4 : Dilation \n");
+		printf("	5 : BinaryOpening \n");
+		printf("	6 : BinaryClosing \n");
+		printf("	7 : Opening \n");
+		printf("	8 : Closing \n");
+		printf("	9 : Binary Edge \n");
+		printf("	10 : Edge \n");
+
+		printf("select : ");
+		scanf_s("%d", &select);
+
+		if (select == 1)
+		{
+			avg = average(img, Row, Col);
+			makeBinary(img, tmpimg, Row, Col, avg);
+			BinaryErosion(tmpimg, outimg, Row, Col, 3);
+		}
+		if (select == 2)
+		{
+			avg = average(img, Row, Col);
+			makeBinary(img, tmpimg, Row, Col, avg);
+			BinaryDilation(tmpimg, outimg, Row, Col, 3);
+		}
+		if (select == 3)
+		{
+
+			printf("KernelSize : ");
+			scanf_s("%d", &kernelSize);
+
+			Erosion(img, outimg, Row, Col, kernelSize);
+		}
+		if (select == 4)
+		{
+
+			printf("KernelSize : ");
+			scanf_s("%d", &kernelSize);
+
+			Dilation(img, outimg, Row, Col, kernelSize);
+		}
+		if (select == 5)
+		{
+			avg = average(img, Row, Col);
+			makeBinary(img, tmpimg, Row, Col, avg);
+			BinaryOpening(tmpimg, outimg, Row, Col, 3);
+		}
+		if (select == 6)
+		{
+			avg = average(img, Row, Col);
+			makeBinary(img, tmpimg, Row, Col, avg);
+			BinaryClosing(tmpimg, outimg, Row, Col, 3);
+		}
+		if (select == 7)
+		{
+
+			printf("KernelSize : ");
+			scanf_s("%d", &kernelSize);
+
+			Opening(img, outimg, Row, Col, kernelSize);
+		}
+		if (select == 8)
+		{
+
+			printf("KernelSize : ");
+			scanf_s("%d", &kernelSize);
+
+			Closing(img, outimg, Row, Col, kernelSize);
+		}
+		if (select == 9)
+		{
+			avg = average(img, Row, Col);
+			makeBinary(img, tmpimg, Row, Col, avg);
+			BinaryErosion(tmpimg, tmpimg1, Row, Col, 3);
+
+			imgSubResult(tmpimg, tmpimg1, outimg, Row, Col);
+
+		}
+		if (select == 10)
+		{
+
+			printf("KernelSize : ");
+			scanf_s("%d", &kernelSize);
+
+			Opening(img, tmpimg1, Row, Col, kernelSize);
+			Closing(img, tmpimg2, Row, Col, kernelSize);
+
+			imgSubResult(tmpimg2, tmpimg1, outimg, Row, Col);
+		}
+	}
+	if (mod == 23)
+	{
+		int select;
+		//double zoomcoeff; // zoom 계수
+
+		printf(" 1 : 최근접 이웃 화소 (Nearest Neighbor Interpolation) \n ");
+		printf(" 2 : B-Spline Interpolatioin \n");
+		printf(" 3 : Scale with Bilinear Interpolatioin \n");
+		printf(" 4 : Rotation \n");
+		printf(" 5 : Translation \n");
+		printf(" 6 : Reflection \n");
+
+
+		printf("select : ");
+		scanf_s("%d", &select);
+
+
+		if (select == 1)
+		{
+			printf("zoom(double) : ");
+			scanf_s("%lf", &zoomcoeff);
+			outimg = uc_alloc(Row * zoomcoeff, Col * zoomcoeff);
+
+			nInterpolation(img, outimg, Row, Col, zoomcoeff);
+
+			//write_ucmatrix(Row * zoomcoeff, Col * zoomcoeff, outimg, argv[4]);
+
+		}
+		if (select == 2)
+		{
+
+			printf("zoom(double) : ");
+			scanf_s("%lf", &zoomcoeff);
+			outimg = uc_alloc(Row * zoomcoeff, Col * zoomcoeff);
+
+			bsInterpolation(img, outimg, Row, Col, zoomcoeff);
+
+		}
+		if (select == 3)
+		{
+			double zoomR, zoomC;
+
+			printf("zoomR(double) : ");
+			scanf_s("%lf", &zoomR);
+			printf("zoomC(double) : ");
+			scanf_s("%lf", &zoomC);
+
+			outimg = uc_alloc(Row * zoomR, Col * zoomC);
+
+			bInterpolation(img, outimg, Row, Col, zoomR, zoomC);
+
+			write_ucmatrix(Row* zoomR, Col* zoomC, outimg, argv[4]);
+
+		}
+		if (select == 4)
+		{
+			double degree;;
+
+			printf("degree(double) : ");
+			scanf_s("%lf", &degree);
+
+			rotate(img, outimg, Row, Col, degree);
+
+		}
+		if (select == 5)
+		{
+			int moveX, moveY;
+
+			printf("(moveX, moveY) : ");
+			scanf_s("%d %d", &moveX, &moveY);
+
+			translate(img, outimg, Row, Col, moveY, moveX);
+
+		}
+		if (select == 6)
+		{
+			double flip;
+
+			printf("flip : ");
+			scanf_s("%lf", &flip);
+
+			reflection(img, outimg, Row, Col, flip);
+		}
+	}
+	write_ucmatrix(Row* zoomcoeff, Col* zoomcoeff, outimg, argv[4]);
 
 	return 0;
 }
